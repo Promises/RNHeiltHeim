@@ -45,14 +45,16 @@ export async function insertParcelFromAPI(
   const db = await getDatabase();
   const latestEvent = data.events[0];
 
+  const isDelivered = data.status === 'DELIVERED' ? 1 : 0;
+
   await db.runAsync(
     `INSERT OR IGNORE INTO parcels (
       parcel_reference, label, status, shop_name, shop_logo_url,
       sender_postal_area, sender_postal_code,
       delivery_postal_area, delivery_postal_code, delivery_type,
       estimated_delivery_content, shipment_number,
-      last_event_content, last_event_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      last_event_content, last_event_at, is_archived
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       data.parcelReference,
       label || null,
@@ -68,6 +70,7 @@ export async function insertParcelFromAPI(
       data.shipmentNumber || null,
       latestEvent?.message?.content || null,
       latestEvent?.createdAt || null,
+      isDelivered,
     ]
   );
 }
@@ -127,7 +130,7 @@ export async function deleteParcel(parcelReference: string): Promise<void> {
 export async function getActiveParcelReferences(): Promise<string[]> {
   const db = await getDatabase();
   const rows = await db.getAllAsync<{ parcel_reference: string }>(
-    'SELECT parcel_reference FROM parcels WHERE is_archived = 0'
+    "SELECT parcel_reference FROM parcels WHERE is_archived = 0 AND status != 'DELIVERED'"
   );
   return rows.map((r) => r.parcel_reference);
 }

@@ -1,5 +1,5 @@
 import { fetchTracking } from '../api/tracking';
-import { getActiveParcelReferences, getParcel, updateParcelFromAPI } from '../db/parcels';
+import { getActiveParcelReferences, getParcel, updateParcelFromAPI, archiveParcel } from '../db/parcels';
 import { upsertEvents } from '../db/events';
 import { sendLocalNotification } from './notifications';
 
@@ -42,6 +42,10 @@ try {
               latestEvent?.message?.content || 'Ny oppdatering',
               { parcelReference: ref }
             );
+
+            if (tracking.status === 'DELIVERED') {
+              await archiveParcel(ref);
+            }
           }
         } catch {
           // Skip individual parcel errors, continue with others

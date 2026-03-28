@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
-import { getAllParcels, updateParcelFromAPI, type ParcelRow } from '../db/parcels';
+import { getAllParcels, updateParcelFromAPI, archiveParcel, type ParcelRow } from '../db/parcels';
 import { upsertEvents } from '../db/events';
 import { fetchTracking } from '../api/tracking';
 
@@ -39,6 +39,9 @@ export function useParcels(archived: boolean) {
                 lastEventAt: latestEvent?.createdAt,
                 estimatedDeliveryContent: tracking.estimatedDelivery?.message?.content,
               });
+              if (tracking.status === 'DELIVERED') {
+                await archiveParcel(parcel.parcel_reference);
+              }
             } catch {
               // Skip failed refreshes
             }
