@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "HeiltHeim",
-    "slug": "HeiltHeim",
+    "slug": "heiltheim",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -29,7 +29,6 @@
       },
       "predictiveBackGestureEnabled": false,
       "permissions": [
-        "RECEIVE_BOOT_COMPLETED",
         "RECEIVE_BOOT_COMPLETED"
       ],
       "package": "com.anonymous.HeiltHeim"
@@ -45,6 +44,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c7b7f093-5006-4227-81e7-42fef92b4f3c"
+      }
+    },
+    "owner": "henningberge"
   }
 }
